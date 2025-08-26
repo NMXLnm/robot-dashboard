@@ -5,153 +5,90 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>机器人管理面板</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      color: #fff;
-    }
-
+    body { margin: 0; font-family: Arial, sans-serif; color: #fff; }
     body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: linear-gradient(270deg, #00c6ff, #0072ff, #00c6ff);
-      background-size: 600% 600%;
-      animation: gradientMove 15s ease infinite;
+      background-size: 600% 600%; animation: gradientMove 15s ease infinite;
       z-index: -1;
     }
-
-    @keyframes gradientMove {
-      0% {background-position: 0% 50%;}
-      50% {background-position: 100% 50%;}
-      100% {background-position: 0% 50%;}
-    }
-
-    header {
-      padding: 20px;
-      text-align: center;
-      font-size: 2em;
-      font-weight: bold;
-      background: rgba(0,0,0,0.3);
-    }
-
-    #searchInput {
-      width: 50%;
-      margin: 20px auto;
-      display: block;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      font-size: 1em;
-    }
-
-    .panel {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
-      padding: 20px;
-    }
-
-    .robot-card {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 15px;
-      padding: 20px;
-      text-align: center;
-      transition: transform 0.2s, box-shadow 0.2s;
-      cursor: pointer;
-    }
-
-    .robot-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-    }
-
-    .robot-name {
-      font-size: 1.2em;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
-
-    .robot-status {
-      font-size: 1em;
-      padding: 6px 12px;
-      border-radius: 20px;
-      display: inline-block;
-    }
-
-    .status-happy { background-color: #4caf50; color: #fff; }
-    .status-sad { background-color: #f44336; color: #fff; }
-    .status-neutral { background-color: #ff9800; color: #fff; }
+    @keyframes gradientMove { 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
+    header { padding: 20px; text-align: center; font-size: 2em; font-weight: bold; background: rgba(0,0,0,0.3);}
+    #searchInput { width: 50%; margin: 20px auto; display: block; padding: 10px; border-radius: 8px; border: none; font-size: 1em; }
+    .panel { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding: 20px;}
+    .robot-card { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; padding: 20px; text-align: center; transition: transform 0.2s, box-shadow 0.2s;}
+    .robot-card:hover { transform: translateY(-5px); box-shadow: 0 5px 20px rgba(0,0,0,0.5);}
+    .robot-avatar { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; border: 2px solid rgba(255,255,255,0.5);}
+    .robot-name { font-size: 1.2em; margin-bottom: 5px; font-weight: bold;}
+    .status-online { color: #4caf50; font-weight: bold; }
+    .status-offline { color: #f44336; font-weight: bold; }
+    .status-unknown { color: #ff9800; font-weight: bold; }
+    .mood-tag { display:inline-block; padding: 5px 12px; border-radius: 15px; font-size:0.9em; margin: 8px 0;}
+    .开心 { background:#4caf50; } .不开心 { background:#f44336; } .心动 { background:#e91e63; } .失望 { background:#607d8b; }
+    .battery-bar { width: 100%; background: rgba(255,255,255,0.2); border-radius: 8px; height: 10px; margin-top: 8px; overflow: hidden;}
+    .battery-fill { height: 10px; border-radius: 8px;}
+    .battery-low { background: #f44336; } .battery-mid { background: #ff9800; } .battery-high { background: #4caf50; }
+    .battery-text { font-size: 0.8em; margin-top: 4px;}
   </style>
 </head>
 <body>
-
 <header>🤖 机器人管理面板</header>
 <input type="text" id="searchInput" placeholder="搜索机器人名字...">
-
 <div class="panel" id="robotPanel"></div>
 
+<script src="robots.js"></script>
 <script>
-  const robotCount = 12;
   const robotPanel = document.getElementById('robotPanel');
   const searchInput = document.getElementById('searchInput');
 
-  const moods = [
-    {label: "开心", class: "status-happy"},
-    {label: "伤心", class: "status-sad"},
-    {label: "平静", class: "status-neutral"}
-  ];
-
-  let robots = [];
-  for(let i=0; i<robotCount; i++){
-    robots.push({
-      name: '机器人' + (i+1),
-      mood: moods[Math.floor(Math.random()*moods.length)]
-    });
-  }
-
-  function renderRobots(filter=''){
+  function renderRobots(filter='') {
     robotPanel.innerHTML = '';
-    robots.filter(r=>r.name.includes(filter)).forEach((robot,index)=>{
+    robots.filter(r => r.name.includes(filter)).forEach(robot => {
       const card = document.createElement('div');
       card.className = 'robot-card';
-      
+
+      const img = document.createElement('img');
+      img.src = robot.avatar;
+      img.className = 'robot-avatar';
+
       const name = document.createElement('div');
       name.className = 'robot-name';
       name.textContent = robot.name;
 
       const status = document.createElement('div');
-      status.className = `robot-status ${robot.mood.class}`;
-      status.textContent = robot.mood.label;
+      status.className = robot.status === "在线" ? "status-online" :
+                        robot.status === "离线" ? "status-offline" : "status-unknown";
+      status.textContent = robot.status;
 
+      const mood = document.createElement('div');
+      mood.className = `mood-tag ${robot.mood}`;
+      mood.textContent = robot.mood;
+
+      const batteryBar = document.createElement('div');
+      batteryBar.className = 'battery-bar';
+      const fill = document.createElement('div');
+      fill.className = 'battery-fill ' + 
+        (robot.battery < 30 ? 'battery-low' : robot.battery < 70 ? 'battery-mid' : 'battery-high');
+      fill.style.width = robot.battery + '%';
+      batteryBar.appendChild(fill);
+
+      const batteryText = document.createElement('div');
+      batteryText.className = 'battery-text';
+      batteryText.textContent = '电量: ' + robot.battery + '%';
+
+      card.appendChild(img);
       card.appendChild(name);
       card.appendChild(status);
-
-      card.addEventListener('click', ()=>{
-        const newName = prompt('请输入机器人名字', robot.name);
-        if(newName) robot.name = newName;
-
-        const moodOptions = moods.map((m, i)=>`${i+1}:${m.label}`).join('\\n');
-        const moodIndex = prompt(`选择情绪:\\n${moodOptions}`);
-        const indexNum = parseInt(moodIndex)-1;
-        if(moods[indexNum]) robot.mood = moods[indexNum];
-
-        renderRobots(searchInput.value);
-      });
+      card.appendChild(mood);
+      card.appendChild(batteryBar);
+      card.appendChild(batteryText);
 
       robotPanel.appendChild(card);
     });
   }
 
-  searchInput.addEventListener('input', ()=>{
-    renderRobots(searchInput.value);
-  });
-
+  searchInput.addEventListener('input', () => renderRobots(searchInput.value));
   renderRobots();
 </script>
-
 </body>
 </html>
