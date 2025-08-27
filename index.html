@@ -16,40 +16,24 @@
     }
 
     /* 背景部分 */
-    .bg-wrap{
-      position:fixed;inset:0;overflow:hidden;z-index:-1;
-    }
+    .bg-wrap{position:fixed;inset:0;overflow:hidden;z-index:-1;}
     .blob{
-      position:absolute;
-      width:60vmax;height:60vmax;
-      top:50%;left:50%;transform:translate(-50%,-50%);
-      filter: blur(80px) saturate(120%);
-      opacity:0.9;
+      position:absolute;width:70vmax;height:70vmax;top:50%;left:50%;
+      transform:translate(-50%,-50%);
+      filter: blur(60px) saturate(160%);
+      opacity:1;
       mix-blend-mode:screen;
       border-radius:50%;
       will-change:transform,opacity;
-      animation-timing-function: linear;
+      animation-timing-function: ease-in-out;
     }
-    .b1{
-      background: radial-gradient(circle at 30% 30%, rgba(255,120,200,0.95) 0%, rgba(145,80,255,0.6) 40%, rgba(80,180,255,0.18) 100%);
-      animation: float1 12s infinite;
-    }
-    .b2{
-      background: radial-gradient(circle at 70% 40%, rgba(0,240,255,0.85) 0%, rgba(90,120,255,0.55) 35%, rgba(200,80,255,0.12) 100%);
-      animation: float2 15s infinite;
-      opacity:0.85;
-      transform:translate(-55%,-55%) scale(0.9);
-    }
-    .b3{
-      background: radial-gradient(circle at 40% 70%, rgba(255,200,90,0.9) 0%, rgba(255,120,120,0.5) 30%, rgba(180,80,255,0.08) 100%);
-      animation: float3 18s infinite;
-      opacity:0.7;
-      transform:translate(-45%,-45%) scale(1.05);
-    }
-    @keyframes float1{0%{transform:translate(-52%,-48%) translateX(-10vw) translateY(0) scale(1)}25%{transform:translate(-50%,-50%) translateX(8vw) translateY(-6vh) scale(1.03)}50%{transform:translate(-48%,-52%) translateX(0) translateY(10vh) scale(0.98)}75%{transform:translate(-50%,-50%) translateX(-6vw) translateY(-4vh) scale(1.02)}100%{transform:translate(-52%,-48%) translateX(-10vw) translateY(0) scale(1)}}
-    @keyframes float2{0%{transform:translate(-55%,-55%) translateX(0) translateY(-6vh) scale(0.9)}20%{transform:translate(-53%,-57%) translateX(6vw) translateY(10vh) scale(0.94)}50%{transform:translate(-52%,-53%) translateX(-8vw) translateY(6vh) scale(0.88)}80%{transform:translate(-54%,-56%) translateX(4vw) translateY(-8vh) scale(0.93)}100%{transform:translate(-55%,-55%) translateX(0) translateY(-6vh) scale(0.9)}}
-    @keyframes float3{0%{transform:translate(-45%,-45%) translateX(6vw) translateY(0) scale(1.05)}33%{transform:translate(-48%,-48%) translateX(-12vw) translateY(6vh) scale(1.03)}66%{transform:translate(-43%,-47%) translateX(8vw) translateY(-10vh) scale(1.07)}100%{transform:translate(-45%,-45%) translateX(6vw) translateY(0) scale(1.05)}}
-    .noise{pointer-events:none;position:fixed;inset:0;mix-blend-mode:overlay;opacity:0.03;background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><defs><filter id="n"><feTurbulence baseFrequency="0.8" numOctaves="1" stitchTiles="stitch"/></filter></defs><rect width="120" height="120" fill="white" filter="url(%23n)"/></svg>');}
+    .b1{background: radial-gradient(circle at 30% 30%, rgba(255,120,200,1) 0%, rgba(145,80,255,0.9) 40%, rgba(80,180,255,0.4) 100%);animation: float1 10s infinite;}
+    .b2{background: radial-gradient(circle at 70% 40%, rgba(0,240,255,1) 0%, rgba(90,120,255,0.9) 35%, rgba(200,80,255,0.3) 100%);animation: float2 14s infinite;opacity:0.95;transform:translate(-55%,-55%) scale(1);}
+    .b3{background: radial-gradient(circle at 40% 70%, rgba(255,200,90,1) 0%, rgba(255,120,120,0.9) 30%, rgba(180,80,255,0.2) 100%);animation: float3 18s infinite;opacity:0.9;transform:translate(-45%,-45%) scale(1.2);}
+    @keyframes float1{0%{transform:translate(-52%,-48%) scale(1)}25%{transform:translate(-45%,-55%) scale(1.15)}50%{transform:translate(-48%,-52%) scale(0.9)}75%{transform:translate(-55%,-45%) scale(1.1)}100%{transform:translate(-52%,-48%) scale(1)}}
+    @keyframes float2{0%{transform:translate(-55%,-55%) scale(1)}20%{transform:translate(-50%,-60%) scale(1.2)}50%{transform:translate(-60%,-50%) scale(0.85)}80%{transform:translate(-53%,-57%) scale(1.1)}100%{transform:translate(-55%,-55%) scale(1)}}
+    @keyframes float3{0%{transform:translate(-45%,-45%) scale(1.2)}33%{transform:translate(-50%,-50%) scale(1)}66%{transform:translate(-40%,-55%) scale(1.25)}100%{transform:translate(-45%,-45%) scale(1.2)}}
+    .noise{pointer-events:none;position:fixed;inset:0;mix-blend-mode:overlay;opacity:0.05;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><defs><filter id="n"><feTurbulence baseFrequency="0.8" numOctaves="1" stitchTiles="stitch"/></filter></defs><rect width="120" height="120" fill="white" filter="url(%23n)"/></svg>');}
 
     /* 前景：机器人面板 */
     header {
@@ -58,6 +42,12 @@
       font-size: 2em;
       font-weight: bold;
       background: rgba(0,0,0,0.3);
+    }
+    header a {
+      font-size: 0.6em;
+      margin-left: 15px;
+      color: #0ff;
+      text-decoration: none;
     }
     #searchInput {
       width: 50%;
@@ -85,138 +75,84 @@
       backdrop-filter: blur(12px) saturate(150%);
       transition: transform 0.2s, box-shadow 0.2s;
     }
-    .robot-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    }
-    .robot-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      margin-bottom: 10px;
-      border: 2px solid rgba(255,255,255,0.4);
-      object-fit: cover;
-    }
-    .robot-name {
-      font-size: 1.2em;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
+    .robot-card:hover { transform: translateY(-5px);box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+    .robot-avatar { width: 80px;height: 80px;border-radius: 50%;margin-bottom: 10px;border: 2px solid rgba(255,255,255,0.4);object-fit: cover;}
+    .robot-name { font-size: 1.2em;font-weight: bold;margin-bottom: 5px; }
     .status-online {color: #4caf50;font-weight:bold;}
     .status-offline {color: #f44336;font-weight:bold;}
     .status-unknown {color: #ff9800;font-weight:bold;}
-    .mood-tag {
-      display:inline-block;
-      margin:6px 0;
-      padding:4px 10px;
-      border-radius:999px;
-      font-size:0.9em;
-      color:#fff;
-    }
-    .开心 { background-color:#4caf50; }
-    .不开心 { background-color:#f44336; }
-    .心动 { background-color:#e91e63; }
-    .失望 { background-color:#9c27b0; }
-    .battery-bar {
-      height:6px;
-      background:#333;
-      border-radius:3px;
-      margin-top:6px;
-      overflow:hidden;
-    }
-    .battery-fill {height:100%;}
-    .battery-low {background:#f44336;}
-    .battery-mid {background:#ff9800;}
-    .battery-high {background:#4caf50;}
-    .battery-text {font-size:0.8em;margin-top:4px;opacity:0.8;}
+    .mood-tag{display:inline-block;margin:6px 0;padding:4px 10px;border-radius:999px;font-size:0.9em;color:#fff;}
+    .开心{background-color:#4caf50;}
+    .不开心{background-color:#f44336;}
+    .心动{background-color:#e91e63;}
+    .失望{background-color:#9c27b0;}
+    .battery-bar{height:6px;background:#333;border-radius:3px;overflow:hidden;margin-top:6px;}
+    .battery-fill{height:100%;}
   </style>
 </head>
 <body>
-  <div id="app">
-    <!-- 背景 -->
-    <div class="bg-wrap" aria-hidden="true">
-      <div class="blob b1"></div>
-      <div class="blob b2"></div>
-      <div class="blob b3"></div>
-      <div class="noise"></div>
-    </div>
-
-    <!-- 前景 -->
-    <header>🤖 机器人管理面板</header>
-    <input type="text" id="searchInput" placeholder="搜索机器人名字...">
-    <div class="panel" id="robotPanel"></div>
+  <div class="bg-wrap" id="bgWrap">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <div class="noise"></div>
   </div>
+
+  <header>
+    🤖 机器人管理面板
+    <a href="settings.html">⚙ 设置</a>
+  </header>
+
+  <input type="text" id="searchInput" placeholder="搜索机器人名字...">
+
+  <div class="panel" id="robotPanel"></div>
 
   <script src="robots.js"></script>
   <script>
-    // 判断是否为手机端
-    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (isMobile) {
-      document.querySelectorAll('.blob').forEach(b => b.style.filter = "blur(40px)");
-      const b3 = document.querySelector('.b3');
-      if (b3) b3.remove(); // 移动端去掉第3个 blob
+    // 检查设置，决定是否显示背景
+    if(localStorage.getItem("enableAnimation") === "false"){
+      document.getElementById("bgWrap").style.display = "none";
     }
 
-    const robotPanel = document.getElementById('robotPanel');
-    const searchInput = document.getElementById('searchInput');
+    const searchInput = document.getElementById("searchInput");
+    const panel = document.getElementById("robotPanel");
 
-    function getEffectiveStatus(robot){
+    // 获取北京时间
+    function getBeijingHour(){
       const now = new Date();
-      const utc = now.getTime() + now.getTimezoneOffset()*60000;
-      const bj = new Date(utc + 8*3600000); // 北京时间
-      const h = bj.getHours();
-      return (h >= 10 && h <= 23) ? "在线" : "离线";
+      const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+      const bj = new Date(utc + 8*3600000);
+      return bj.getHours();
     }
 
-    function renderRobots(filter=''){
-      robotPanel.innerHTML='';
-      robots.filter(r=>r.name.includes(filter)).forEach(robot=>{
-        const card=document.createElement('div');
-        card.className='robot-card';
+    function renderRobots(filter=""){
+      panel.innerHTML = "";
+      const hour = getBeijingHour();
+      const online = (hour >= 10 && hour <= 23); // 10:00 ~ 23:59 在线
 
-        const img=document.createElement('img');
-        img.src=robot.avatar;
-        img.className='robot-avatar';
+      window.robots.filter(r=>r.name.includes(filter)).forEach(r=>{
+        const status = online ? "在线" : "离线";
 
-        const name=document.createElement('div');
-        name.className='robot-name';
-        name.textContent=robot.name;
-
-        const effectiveStatus=getEffectiveStatus(robot);
-        const status=document.createElement('div');
-        status.className=effectiveStatus==="在线"?"status-online":effectiveStatus==="离线"?"status-offline":"status-unknown";
-        status.textContent=effectiveStatus;
-
-        const mood=document.createElement('div');
-        mood.className='mood-tag '+robot.mood;
-        mood.textContent=robot.mood;
-
-        const batteryBar=document.createElement('div');
-        batteryBar.className='battery-bar';
-        const fill=document.createElement('div');
-        fill.className='battery-fill '+
-          (robot.battery<30?'battery-low':robot.battery<70?'battery-mid':'battery-high');
-        fill.style.width=robot.battery+'%';
-        batteryBar.appendChild(fill);
-
-        const batteryText=document.createElement('div');
-        batteryText.className='battery-text';
-        batteryText.textContent='电量: '+robot.battery+'%';
-
-        card.appendChild(img);
-        card.appendChild(name);
-        card.appendChild(status);
-        card.appendChild(mood);
-        card.appendChild(batteryBar);
-        card.appendChild(batteryText);
-
-        robotPanel.appendChild(card);
+        const card = document.createElement("div");
+        card.className="robot-card";
+        card.innerHTML = `
+          <img src="${r.avatar}" class="robot-avatar">
+          <div class="robot-name">${r.name}</div>
+          <div class="status-${status==='在线'?'online':'offline'}">${status}</div>
+          <div class="mood-tag ${r.mood}">${r.mood}</div>
+          <div class="battery-bar"><div class="battery-fill" style="width:${r.battery}%;background:${r.battery<30?'red':r.battery<60?'yellow':'lime'}"></div></div>
+          <div style="font-size:0.8em;margin-top:4px;">电量: ${r.battery}%</div>
+        `;
+        panel.appendChild(card);
       });
     }
-
-    searchInput.addEventListener('input',()=>renderRobots(searchInput.value));
-    setInterval(()=>renderRobots(searchInput.value),60*1000);
     renderRobots();
+    searchInput.addEventListener("input", e=>{
+      renderRobots(e.target.value);
+    });
+
+    // 定时每分钟刷新状态
+    setInterval(()=>renderRobots(searchInput.value), 60000);
   </script>
 </body>
 </html>
