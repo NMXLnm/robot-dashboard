@@ -149,15 +149,21 @@
 
   <script src="robots.js"></script>
   <script>
+    // 判断是否为手机端
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobile) {
+      document.querySelectorAll('.blob').forEach(b => b.style.filter = "blur(40px)");
+      const b3 = document.querySelector('.b3');
+      if (b3) b3.remove(); // 移动端去掉第3个 blob
+    }
+
     const robotPanel = document.getElementById('robotPanel');
     const searchInput = document.getElementById('searchInput');
 
     function getEffectiveStatus(robot){
       const now = new Date();
-      const hour = now.getHours();
-      const minute = now.getMinutes();
       const utc = now.getTime() + now.getTimezoneOffset()*60000;
-      const bj = new Date(utc + 8*3600000);
+      const bj = new Date(utc + 8*3600000); // 北京时间
       const h = bj.getHours();
       return (h >= 10 && h <= 23) ? "在线" : "离线";
     }
