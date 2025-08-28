@@ -74,18 +74,44 @@
       box-shadow: 0 10px 30px rgba(2,6,23,0.6);
       backdrop-filter: blur(12px) saturate(150%);
       transition: transform 0.2s, box-shadow 0.2s;
+      opacity: 0;
     }
-    .robot-card:hover { transform: translateY(-5px);box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+    .robot-card:hover { transform: scale(1.05); box-shadow: 0 10px 40px rgba(0,0,0,0.6);}
+    .robot-card:active { transform: scale(0.95); }
+
+    @keyframes fadeInUp {
+      0%   { opacity: 0; transform: translateY(30px) scale(0.9); }
+      60%  { opacity: 1; transform: translateY(-10px) scale(1.05); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* 电量低时闪烁 */
+    .low-battery { animation: lowBatteryFlash 1s infinite; }
+    @keyframes lowBatteryFlash {
+      0%, 100% { box-shadow: 0 0 10px rgba(255,0,0,0.8); border-color: rgba(255,0,0,0.8); }
+      50% { box-shadow: 0 0 25px rgba(255,0,0,1); border-color: rgba(255,0,0,1); }
+    }
+
     .robot-avatar { width: 80px;height: 80px;border-radius: 50%;margin-bottom: 10px;border: 2px solid rgba(255,255,255,0.4);object-fit: cover;}
     .robot-name { font-size: 1.2em;font-weight: bold;margin-bottom: 5px; }
-    .status-online {color: #4caf50;font-weight:bold;}
-    .status-offline {color: #f44336;font-weight:bold;}
-    .status-unknown {color: #ff9800;font-weight:bold;}
-    .mood-tag{display:inline-block;margin:6px 0;padding:4px 10px;border-radius:999px;font-size:0.9em;color:#fff;}
-    .开心{background-color:#4caf50;}
-    .不开心{background-color:#f44336;}
-    .心动{background-color:#e91e63;}
-    .失望{background-color:#9c27b0;}
+
+    /* 状态圆点 */
+    .status { font-weight:bold; font-size:1.2em; }
+    .status-online::before { content: "🟢 "; }
+    .status-offline::before { content: "🔴 "; }
+    .status-unknown::before { content: "🟡 "; }
+
+    /* 渐变情绪标签 */
+    .mood-tag{
+      display:inline-block;margin:6px 0;padding:4px 12px;
+      border-radius:999px;font-size:0.9em;color:#fff;
+      font-weight:600;
+    }
+    .开心{ background: linear-gradient(135deg,#4caf50,#81c784); }
+    .不开心{ background: linear-gradient(135deg,#f44336,#e57373); }
+    .心动{ background: linear-gradient(135deg,#e91e63,#f48fb1); }
+    .失望{ background: linear-gradient(135deg,#9c27b0,#ba68c8); }
+
     .battery-bar{height:6px;background:#333;border-radius:3px;overflow:hidden;margin-top:6px;}
     .battery-fill{height:100%;}
   </style>
@@ -109,7 +135,6 @@
 
   <script src="robots.js"></script>
   <script>
-    // 检查设置，决定是否显示背景
     if(localStorage.getItem("enableAnimation") === "false"){
       document.getElementById("bgWrap").style.display = "none";
     }
@@ -117,7 +142,6 @@
     const searchInput = document.getElementById("searchInput");
     const panel = document.getElementById("robotPanel");
 
-    // 获取北京时间
     function getBeijingHour(){
       const now = new Date();
       const utc = now.getTime() + now.getTimezoneOffset() * 60000;
@@ -128,30 +152,40 @@
     function renderRobots(filter=""){
       panel.innerHTML = "";
       const hour = getBeijingHour();
-      const online = (hour >= 10 && hour <= 23); // 10:00 ~ 23:59 在线
+      const online = (hour >= 10 && hour <= 23);
 
-      window.robots.filter(r=>r.name.includes(filter)).forEach(r=>{
+      window.robots.filter(r=>r.name.toLowerCase().includes(filter.toLowerCase())).forEach((r,i)=>{
         const status = online ? "在线" : "离线";
+        const statusClass = online ? "status-online" : "status-offline";
+
+        let moodEmoji = "";
+        if(r.mood==="开心") moodEmoji="😀";
+        else if(r.mood==="不开心") moodEmoji="😞";
+        else if(r.mood==="心动") moodEmoji="💖";
+        else if(r.mood==="失望") moodEmoji="😔";
 
         const card = document.createElement("div");
         card.className="robot-card";
+        if(r.battery < 20) card.classList.add("low-battery");
+        card.style.animation = `fadeInUp 0.6s ease forwards`;
+        card.style.animationDelay = `${i * 0.1}s`;
+
         card.innerHTML = `
           <img src="${r.avatar}" class="robot-avatar">
           <div class="robot-name">${r.name}</div>
-          <div class="status-${status==='在线'?'online':'offline'}">${status}</div>
-          <div class="mood-tag ${r.mood}">${r.mood}</div>
+          <div class="status ${statusClass}">${status}</div>
+          <div class="mood-tag ${r.mood}">${moodEmoji} ${r.mood}</div>
           <div class="battery-bar"><div class="battery-fill" style="width:${r.battery}%;background:${r.battery<30?'red':r.battery<60?'yellow':'lime'}"></div></div>
           <div style="font-size:0.8em;margin-top:4px;">电量: ${r.battery}%</div>
         `;
         panel.appendChild(card);
       });
     }
+
     renderRobots();
     searchInput.addEventListener("input", e=>{
       renderRobots(e.target.value);
     });
-
-    // 定时每分钟刷新状态
     setInterval(()=>renderRobots(searchInput.value), 60000);
   </script>
 </body>
