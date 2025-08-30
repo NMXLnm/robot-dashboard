@@ -1,180 +1,223 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>机器人论坛</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>论坛</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    html,body,#app{height:100%}
     body{
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Helvetica Neue', Arial;
-      background: #0f172a;
+      font-family: Inter, ui-sans-serif, system-ui;
+      background:#0f172a;
       color:#fff;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
     }
 
-    /* 背景部分 */
-    .bg-wrap{position:fixed;inset:0;overflow:hidden;z-index:-1;}
-    .blob{
-      position:absolute;width:70vmax;height:70vmax;top:50%;left:50%;
-      transform:translate(-50%,-50%);
-      filter: blur(60px) saturate(160%);
-      opacity:1;
-      mix-blend-mode:screen;
-      border-radius:50%;
-      animation-timing-function: ease-in-out;
-    }
-    .b1{background: radial-gradient(circle at 30% 30%, rgba(255,120,200,1), rgba(145,80,255,0.9), rgba(80,180,255,0.4));animation: float1 10s infinite;}
-    .b2{background: radial-gradient(circle at 70% 40%, rgba(0,240,255,1), rgba(90,120,255,0.9), rgba(200,80,255,0.3));animation: float2 14s infinite;opacity:0.95;}
-    .b3{background: radial-gradient(circle at 40% 70%, rgba(255,200,90,1), rgba(255,120,120,0.9), rgba(180,80,255,0.2));animation: float3 18s infinite;opacity:0.9;}
-    @keyframes float1{0%{transform:translate(-52%,-48%) scale(1)}25%{transform:translate(-45%,-55%) scale(1.15)}50%{transform:translate(-48%,-52%) scale(0.9)}75%{transform:translate(-55%,-45%) scale(1.1)}100%{transform:translate(-52%,-48%) scale(1)}}
-    @keyframes float2{0%{transform:translate(-55%,-55%) scale(1)}20%{transform:translate(-50%,-60%) scale(1.2)}50%{transform:translate(-60%,-50%) scale(0.85)}80%{transform:translate(-53%,-57%) scale(1.1)}100%{transform:translate(-55%,-55%) scale(1)}}
-    @keyframes float3{0%{transform:translate(-45%,-45%) scale(1.2)}33%{transform:translate(-50%,-50%) scale(1)}66%{transform:translate(-40%,-55%) scale(1.25)}100%{transform:translate(-45%,-45%) scale(1.2)}}
+    /* 背景 */
+    .bg-wrap{position:fixed;inset:0;z-index:-1;overflow:hidden;}
+    .blob{position:absolute;width:70vmax;height:70vmax;top:50%;left:50%;border-radius:50%;
+      filter:blur(60px) saturate(160%);mix-blend-mode:screen;animation:float 15s infinite alternate;}
+    .b1{background:radial-gradient(circle,rgba(255,120,200,.9),rgba(80,180,255,.3));}
+    .b2{background:radial-gradient(circle,rgba(0,240,255,.9),rgba(200,80,255,.3));animation-duration:18s;}
+    .b3{background:radial-gradient(circle,rgba(255,200,90,.9),rgba(255,120,120,.4));animation-duration:20s;}
+    @keyframes float{from{transform:translate(-50%,-50%) scale(1);}to{transform:translate(-45%,-55%) scale(1.2);}}
+    .noise{pointer-events:none;position:fixed;inset:0;opacity:0.05;mix-blend-mode:overlay;}
 
-    .noise{pointer-events:none;position:fixed;inset:0;mix-blend-mode:overlay;opacity:0.05;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><defs><filter id="n"><feTurbulence baseFrequency="0.8" numOctaves="1" stitchTiles="stitch"/></filter></defs><rect width="120" height="120" fill="white" filter="url(%23n)"/></svg>');}
+    header{padding:20px;text-align:center;font-size:1.8em;font-weight:bold;background:rgba(0,0,0,.3);}
+    header a{font-size:.6em;margin-left:15px;color:#0ff;text-decoration:none;}
+    main{padding:20px;}
 
-    /* Header */
-    header {
-      padding: 20px;
-      text-align: center;
-      font-size: 2em;
-      font-weight: bold;
-      background: rgba(0,0,0,0.3);
-    }
-    header nav a {
-      font-size: 0.6em;
-      margin: 0 10px;
-      color: #0ff;
-      text-decoration: none;
-    }
+    .card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);
+      border-radius:16px;padding:15px;margin-bottom:20px;backdrop-filter:blur(12px) saturate(150%);
+      box-shadow:0 10px 30px rgba(2,6,23,.6);}
+    .card h3{margin-bottom:6px;}
+    .meta{font-size:.8em;color:#ccc;margin-bottom:8px;}
+    .tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.8em;
+      background:linear-gradient(90deg,#4facfe,#00f2fe);color:#fff;}
 
-    /* Forum Layout */
-    .forum-container {
-      max-width: 900px;
-      margin: 30px auto;
-      padding: 20px;
-    }
+    #posts button{margin:3px;}
+    #auth,#newPost{text-align:center;margin:20px;}
+    input,textarea,select{width:90%;max-width:400px;margin:6px auto;padding:8px;border-radius:8px;border:none;}
+    button{padding:6px 12px;border:none;border-radius:6px;cursor:pointer;}
+    .btn-small{font-size:.8em;padding:3px 8px;}
 
-    .post-card {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 16px;
-      padding: 15px;
-      margin-bottom: 20px;
-      backdrop-filter: blur(12px) saturate(150%);
-      box-shadow: 0 10px 30px rgba(2,6,23,0.6);
-    }
-
-    .post-card h3 {
-      margin-bottom: 10px;
-    }
-    .post-meta {
-      font-size: 0.8em;
-      opacity: 0.7;
-      margin-bottom: 8px;
-    }
-
-    /* New post form */
-    .new-post {
-      background: rgba(255,255,255,0.08);
-      border-radius: 16px;
-      padding: 15px;
-      margin-bottom: 30px;
-      backdrop-filter: blur(12px) saturate(150%);
-      box-shadow: 0 10px 30px rgba(2,6,23,0.6);
-    }
-    .new-post input, .new-post textarea {
-      width: 100%;
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-      font-size: 1em;
-    }
-    .new-post button {
-      padding: 10px 20px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-      background: #0ff;
-      color: #000;
-    }
+    .replies{margin-left:15px;margin-top:10px;border-left:2px solid rgba(255,255,255,.2);padding-left:10px;}
   </style>
 </head>
 <body>
   <div class="bg-wrap">
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
-    <div class="blob b3"></div>
+    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
     <div class="noise"></div>
   </div>
 
-  <header>
-    💬 机器人论坛
-    <nav>
-      <a href="index.html">🏠 管理面板</a>
-      <a href="settings.html">⚙ 设置</a>
-    </nav>
-  </header>
+  <header>💬 论坛 <a href="index.html">回管理面板</a></header>
 
-  <div class="forum-container">
-    <!-- New Post -->
-    <div class="new-post">
-      <h2>发表新帖</h2>
-      <input type="text" id="postTitle" placeholder="标题">
-      <textarea id="postContent" rows="4" placeholder="内容"></textarea>
-      <button onclick="addPost()">发布</button>
+  <main>
+    <div id="auth">
+      <input id="email" placeholder="邮箱">
+      <input id="password" type="password" placeholder="密码">
+      <button onclick="register()">注册</button>
+      <button onclick="login()">登录</button>
+      <button onclick="logout()">登出</button>
+      <input type="file" id="avatarUpload" accept="image/*">
     </div>
 
-    <!-- Posts -->
+    <!-- 分类筛选 -->
+    <div style="text-align:center;margin:10px;">
+      <button onclick="filterCategory('全部')">全部</button>
+      <button onclick="filterCategory('聊天')">聊天</button>
+      <button onclick="filterCategory('技术')">技术</button>
+      <button onclick="filterCategory('反馈')">反馈</button>
+    </div>
+
+    <!-- 发布新帖 -->
+    <div id="newPost" style="display:none;">
+      <input id="postTitle" placeholder="帖子标题"><br>
+      <textarea id="postContent" placeholder="帖子内容"></textarea><br>
+      <select id="postCategory">
+        <option value="聊天">聊天</option>
+        <option value="技术">技术</option>
+        <option value="反馈">反馈</option>
+      </select><br>
+      <button onclick="addPost()">发布</button>
+      <button onclick="cancelNewPost()">取消</button>
+    </div>
+    <div style="text-align:center;"><button onclick="showNewPost()">✏ 发布帖子</button></div>
+
+    <!-- 帖子区 -->
     <div id="posts"></div>
-  </div>
+  </main>
 
-  <!-- Firebase -->
-  <script type="module" src="firebase.js"></script>
+  <!-- Firebase SDK -->
   <script type="module">
-    import { getFirestore, collection, addDoc, getDocs, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { app } from "./firebase.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore,collection,addDoc,getDocs,serverTimestamp,query,orderBy,deleteDoc,doc,updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getStorage,ref,uploadBytes,getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-    const db = getFirestore(app);
-    const postsContainer = document.getElementById("posts");
+    const firebaseConfig={
+      apiKey:"AIzaSyD7KN-D2L52ckATbk1aEDZgwhXYDADU7sE",
+      authDomain:"fir-9fe3e.firebaseapp.com",
+      projectId:"fir-9fe3e",
+      storageBucket:"fir-9fe3e.appspot.com",
+      messagingSenderId:"110235897961",
+      appId:"1:110235897961:web:aa862e3d76ec5879c252f8"
+    };
+    const app=initializeApp(firebaseConfig);
+    const auth=getAuth(app);
+    const db=getFirestore(app);
+    const storage=getStorage(app);
 
-    async function loadPosts(){
-      postsContainer.innerHTML = "";
-      const q = query(collection(db, "posts"), orderBy("time","desc"));
-      const snapshot = await getDocs(q);
-      snapshot.forEach(doc=>{
-        const p = doc.data();
-        const div = document.createElement("div");
-        div.className="post-card";
-        div.innerHTML = `
-          <h3>${p.title}</h3>
-          <div class="post-meta">作者: ${p.author||"匿名"} | 时间: ${p.time?.toDate().toLocaleString()}</div>
-          <p>${p.content}</p>
-        `;
-        postsContainer.appendChild(div);
-      });
+    const postsContainer=document.getElementById("posts");
+    let currentCategory="全部";
+
+    // 注册
+    async function register(){
+      const email=document.getElementById("email").value;
+      const pw=document.getElementById("password").value;
+      await createUserWithEmailAndPassword(auth,email,pw);
+      alert("注册成功");
     }
+    // 登录
+    async function login(){
+      const email=document.getElementById("email").value;
+      const pw=document.getElementById("password").value;
+      await signInWithEmailAndPassword(auth,email,pw);
+      alert("登录成功");
+    }
+    function logout(){signOut(auth);}
 
+    // 上传头像
+    document.getElementById("avatarUpload").addEventListener("change",async e=>{
+      const file=e.target.files[0];
+      if(!file||!auth.currentUser)return;
+      const r=ref(storage,"avatars/"+auth.currentUser.uid);
+      await uploadBytes(r,file);
+      const url=await getDownloadURL(r);
+      await updateProfile(auth.currentUser,{photoURL:url});
+      alert("头像已更新");
+    });
+
+    function showNewPost(){document.getElementById("newPost").style.display="block";}
+    function cancelNewPost(){document.getElementById("newPost").style.display="none";}
+
+    // 发帖
     async function addPost(){
       const title=document.getElementById("postTitle").value.trim();
       const content=document.getElementById("postContent").value.trim();
-      if(!title || !content) return alert("请填写完整！");
+      const category=document.getElementById("postCategory").value;
+      if(!title||!content) return alert("请填写完整！");
       await addDoc(collection(db,"posts"),{
-        title,content,
-        author:"匿名用户",
-        time:serverTimestamp()
+        title,content,category,
+        author:auth.currentUser?auth.currentUser.email:"匿名",
+        avatar:auth.currentUser?.photoURL||"",
+        time:serverTimestamp(),
+        pinned:false
       });
-      document.getElementById("postTitle").value="";
-      document.getElementById("postContent").value="";
+      cancelNewPost();
       loadPosts();
     }
 
-    loadPosts();
+    function filterCategory(cat){currentCategory=cat;loadPosts();}
+
+    // 加载帖子
+    async function loadPosts(){
+      postsContainer.innerHTML="";
+      const q=query(collection(db,"posts"),orderBy("time","desc"));
+      const snapshot=await getDocs(q);
+      let pinned=[],normal=[];
+      snapshot.forEach(d=>{
+        const p={id:d.id,...d.data()};
+        if(currentCategory!=="全部" && p.category!==currentCategory) return;
+        if(p.pinned)pinned.push(p);else normal.push(p);
+      });
+      [...pinned,...normal].forEach(p=>{
+        const div=document.createElement("div");div.className="card";
+        div.innerHTML=`
+          <h3>${p.title} ${p.pinned?"📌":""}</h3>
+          <div class="meta">分类: <span class="tag">${p.category}</span> | 作者: ${p.author} | ${p.time? p.time.toDate().toLocaleString():""}</div>
+          ${p.avatar?`<img src="${p.avatar}" width="40" style="border-radius:50%">`:""}
+          <p>${p.content}</p>
+          <div class="replies" id="replies-${p.id}"></div>
+          <input id="reply-${p.id}" placeholder="回复内容">
+          <button class="btn-small" onclick="replyPost('${p.id}')">回复</button>
+          ${isAdmin(auth.currentUser)?`
+            <button class="btn-small" onclick="deletePost('${p.id}')">🗑 删除</button>
+            <button class="btn-small" onclick="togglePin('${p.id}',${p.pinned})">${p.pinned?"取消置顶":"📌 置顶"}</button>
+          `:""}
+        `;
+        postsContainer.appendChild(div);
+        loadReplies(p.id);
+      });
+    }
+
+    // 回复
+    async function replyPost(id){
+      const c=document.getElementById("reply-"+id).value.trim();
+      if(!c) return;
+      await addDoc(collection(db,"posts",id,"replies"),{
+        content:c,
+        author:auth.currentUser?auth.currentUser.email:"匿名",
+        time:serverTimestamp()
+      });
+      loadReplies(id);
+    }
+    async function loadReplies(id){
+      const cont=document.getElementById("replies-"+id);
+      cont.innerHTML="";
+      const q=query(collection(db,"posts",id,"replies"),orderBy("time","asc"));
+      const snap=await getDocs(q);
+      snap.forEach(r=>{
+        const d=r.data();
+        cont.innerHTML+=`<p><b>${d.author}:</b> ${d.content}</p>`;
+      });
+    }
+
+    // 管理员功能
+    function isAdmin(u){return u&&u.email==="admin@example.com";}
+    async function deletePost(id){await deleteDoc(doc(db,"posts",id));loadPosts();}
+    async function togglePin(id,st){await updateDoc(doc(db,"posts",id),{pinned:!st});loadPosts();}
+
+    auth.onAuthStateChanged(()=>loadPosts());
   </script>
 </body>
 </html>
