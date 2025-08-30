@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>登录/注册</title>
+  <style>
+    body { font-family: Inter, sans-serif; background: #0f172a; color:#fff; text-align:center; padding:40px; }
+    input { display:block; margin:10px auto; padding:8px; width:200px; border-radius:6px; border:none; }
+    button { padding:8px 14px; border:none; border-radius:6px; background:#4cafef; color:#fff; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <h2>用户登录 / 注册</h2>
+  <input id="email" type="email" placeholder="邮箱">
+  <input id="password" type="password" placeholder="密码">
+  <button onclick="login()">登录</button>
+  <button onclick="register()">注册</button>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="firebase.js"></script>
+  <script>
+    function login(){
+      auth.signInWithEmailAndPassword(
+        document.getElementById("email").value,
+        document.getElementById("password").value
+      ).then(()=> location.href="forum.html")
+      .catch(err=>alert(err.message));
+    }
+    function register(){
+      auth.createUserWithEmailAndPassword(
+        document.getElementById("email").value,
+        document.getElementById("password").value
+      ).then(()=> alert("注册成功，请登录"))
+      .catch(err=>alert(err.message));
+    }
+  </script>
+</body>
+</html>
